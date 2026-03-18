@@ -58,10 +58,8 @@
 <div class="card">
   <h3>💳 Add Money</h3>
   <img src="qr.png" width="200">
-  <p>QR scan karo aur payment karo</p>
-  <button onclick="window.open('https://wa.me/918104382208')">
-    Send Payment Screenshot
-  </button>
+  <p>Scan QR to pay and add balance</p>
+  <button onclick="window.open('qr.png')">Scan QR</button>
 </div>
 
 <div class="card">
@@ -84,7 +82,7 @@
 
 <div class="card">
   <h3>🎮 Room Details</h3>
-  <p id="room">Join karne ke baad dikhega</p>
+  <p id="room">Join match to see Room ID</p>
 </div>
 
 <h2 id="status"></h2>
@@ -92,19 +90,22 @@
 </div>
 
 <script>
-let wallet = localStorage.getItem("wallet") || 0;
+let wallet = parseInt(localStorage.getItem("wallet")) || 0;
 let player = localStorage.getItem("player");
 
+// Room ID placeholders — tu yahan apna actual Room ID & Pass dal de
 let roomData = {
   "Solo": "Room ID: 12345 | Pass: 111",
   "Duo": "Room ID: 67890 | Pass: 222",
   "Squad": "Room ID: 54321 | Pass: 333"
 };
 
+// Agar player pehle login kar chuka hai
 if(player){
   showApp();
 }
 
+// LOGIN FUNCTION
 function login(){
   let name = document.getElementById("name").value;
   if(name){
@@ -113,6 +114,7 @@ function login(){
   }
 }
 
+// SHOW APP
 function showApp(){
   document.getElementById("loginBox").style.display = "none";
   document.getElementById("app").style.display = "block";
@@ -124,11 +126,13 @@ function showApp(){
   updateWallet();
 }
 
+// UPDATE WALLET
 function updateWallet(){
   document.getElementById("wallet").innerText = wallet;
   localStorage.setItem("wallet", wallet);
 }
 
+// JOIN MATCH
 function join(fee,type){
   if(wallet >= fee){
     wallet -= fee;
