@@ -5,7 +5,7 @@
   <style>
     body {
       font-family: Arial;
-      background: linear-gradient(black, red);
+      background: linear-gradient(black, purple);
       color: white;
       text-align: center;
     }
@@ -15,15 +15,17 @@
       margin: 20px;
       padding: 20px;
       border-radius: 10px;
+      border: 2px solid red;
       box-shadow: 0 0 10px red;
     }
 
     button {
       padding: 10px 20px;
-      background: orange;
+      background: linear-gradient(orange, red);
       border: none;
       border-radius: 5px;
       cursor: pointer;
+      color: white;
     }
 
     input {
@@ -37,6 +39,7 @@
 
 <body>
 
+<img src="logo.png" width="120">
 <h1>🔥 HSA Tournament</h1>
 
 <!-- LOGIN -->
@@ -45,18 +48,21 @@
   <button onclick="login()">Login</button>
 </div>
 
-<!-- MAIN -->
+<!-- MAIN APP -->
 <div id="app" style="display:none;">
 
 <h2>👤 Player: <span id="player"></span></h2>
 <h2>💰 Wallet: ₹<span id="wallet"></span></h2>
 
-<!-- PAYMENT BUTTON -->
-<button onclick="window.open('https://rzp.io/l/YOUR-LINK')">
-💳 Add Money (UPI)
-</button>
-
-<p>⚠️ Payment karne ke baad admin se balance add karvao</p>
+<!-- QR PAYMENT -->
+<div class="card">
+  <h3>💳 Add Money</h3>
+  <img src="qr.png" width="200">
+  <p>QR scan karo aur payment karo</p>
+  <button onclick="window.open('https://wa.me/91XXXXXXXXXX')">
+    Send Payment Screenshot
+  </button>
+</div>
 
 <div class="card">
   <h3>Solo Match</h3>
