@@ -15,10 +15,15 @@
 <img src="logo.png" width="120">
 <h1>🔥 HSA Tournament</h1>
 
-<!-- LOGIN -->
+<!-- SIGNUP / LOGIN -->
 <div id="loginBox">
-  <input id="name" placeholder="Enter Name">
-  <input id="password" type="password" placeholder="Enter Admin Code (if admin)">
+  <input id="email" placeholder="Enter Email">
+  <input id="password" type="password" placeholder="Create/Enter Password">
+  <select id="role">
+    <option value="user">Player</option>
+    <option value="admin">Admin</option>
+  </select>
+  <button onclick="signup()">Signup</button>
   <button onclick="login()">Login</button>
 </div>
 
@@ -63,28 +68,27 @@
   <!-- ADMIN PANEL -->
   <div id="adminPanel">
     <h3>🛠 Admin Panel</h3>
-
     <label>Solo Room ID | Pass:</label>
-    <input id="soloRoom" placeholder="12345 | 111"><br>
-
+    <input id="soloRoom"><br>
     <label>Duo Room ID | Pass:</label>
-    <input id="duoRoom" placeholder="67890 | 222"><br>
-
+    <input id="duoRoom"><br>
     <label>Squad Room ID | Pass:</label>
-    <input id="squadRoom" placeholder="54321 | 333"><br>
-
+    <input id="squadRoom"><br>
     <label>QR Image URL:</label>
-    <input id="qrLink" placeholder="qr.png"><br>
-
+    <input id="qrLink"><br>
     <button onclick="saveAdmin()">Save Changes</button>
+    <button onclick="switchAccount()">Switch Account</button>
   </div>
 </div>
 
 <script>
+// Users storage
+let users = JSON.parse(localStorage.getItem("users")) || {};
 let wallet = parseInt(localStorage.getItem("wallet")) || 0;
 let player = localStorage.getItem("player");
+let role = localStorage.getItem("role");
 
-// Room Data + QR
+// Room + QR
 let roomData = {
   "Solo": "Room ID: 12345 | Pass: 111",
   "Duo": "Room ID: 67890 | Pass: 222",
@@ -92,18 +96,39 @@ let roomData = {
 };
 let qrImage = "qr.png";
 
-// LOGIN FUNCTION
+// SIGNUP
+function signup(){
+  let email = document.getElementById("email").value.trim();
+  let password = document.getElementById("password").value.trim();
+  let selectedRole = document.getElementById("role").value;
+
+  if(email && password){
+    users[email] = {password: password, role: selectedRole};
+    localStorage.setItem("users", JSON.stringify(users));
+    alert("✅ Signup successful! Now login.");
+  } else {
+    alert("Enter email and password");
+  }
+}
+
+// LOGIN
 function login(){
-  let name = document.getElementById("name").value.trim();
+  let email = document.getElementById("email").value.trim();
   let password = document.getElementById("password").value.trim();
 
-  localStorage.setItem("player", name);
-  showApp();
+  if(users[email] && users[email].password === password){
+    player = email;
+    role = users[email].role;
+    localStorage.setItem("player", player);
+    localStorage.setItem("role", role);
+    showApp();
 
-  // PASSWORD CHECK
-  if(password === "Axiron8104382208@"){
-    document.getElementById("adminPanel").style.display = "block";
-    loadAdminPanel();
+    if(role === "admin"){
+      document.getElementById("adminPanel").style.display = "block";
+      loadAdminPanel();
+    }
+  } else {
+    alert("Invalid email/password");
   }
 }
 
@@ -111,13 +136,11 @@ function login(){
 function showApp(){
   document.getElementById("loginBox").style.display = "none";
   document.getElementById("app").style.display = "block";
-  player = localStorage.getItem("player");
-  wallet = parseInt(localStorage.getItem("wallet")) || 0;
   document.getElementById("player").innerText = player;
   updateWallet();
 }
 
-// WALLET UPDATE
+// WALLET
 function updateWallet(){
   document.getElementById("wallet").innerText = wallet;
   localStorage.setItem("wallet", wallet);
@@ -135,7 +158,7 @@ function join(fee,type){
   }
 }
 
-// ADMIN PANEL FUNCTIONS
+// ADMIN PANEL
 function loadAdminPanel(){
   document.getElementById("soloRoom").value = roomData["Solo"];
   document.getElementById("duoRoom").value = roomData["Duo"];
@@ -152,9 +175,20 @@ function saveAdmin(){
   alert("✅ Changes saved!");
 }
 
-// AUTO SHOW APP IF PLAYER LOGGED
+// SWITCH ACCOUNT
+function switchAccount(){
+  localStorage.removeItem("player");
+  localStorage.removeItem("role");
+  location.reload();
+}
+
+// AUTO SHOW APP IF LOGGED
 if(player){ 
   showApp();
+  if(role === "admin") {
+    document.getElementById("adminPanel").style.display = "block";
+    loadAdminPanel();
+  }
 }
 </script>
 
