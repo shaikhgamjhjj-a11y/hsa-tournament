@@ -3,40 +3,13 @@
 <head>
   <title>HSA Tournament</title>
   <style>
-    body {
-      font-family: Arial;
-      background: linear-gradient(black, purple);
-      color: white;
-      text-align: center;
-    }
-
-    .card {
-      background: #222;
-      margin: 20px;
-      padding: 20px;
-      border-radius: 10px;
-      border: 2px solid red;
-      box-shadow: 0 0 10px red;
-    }
-
-    button {
-      padding: 10px 20px;
-      background: linear-gradient(orange, red);
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      color: white;
-    }
-
-    input {
-      padding: 10px;
-      margin: 5px;
-      border-radius: 5px;
-      border: none;
-    }
+    body { font-family: Arial; background: linear-gradient(black,purple); color: white; text-align: center;}
+    .card { background:#222; margin:20px; padding:20px; border-radius:10px; border:2px solid red; box-shadow:0 0 10px red;}
+    button { padding:10px 20px; background:linear-gradient(orange,red); border:none; border-radius:5px; cursor:pointer; color:white;}
+    input { padding:10px; margin:5px; border-radius:5px; border:none; }
+    #adminPanel { border:2px solid yellow; padding:10px; margin:20px; display:none;}
   </style>
 </head>
-
 <body>
 
 <img src="logo.png" width="120">
@@ -50,60 +23,74 @@
 
 <!-- MAIN APP -->
 <div id="app" style="display:none;">
+  <h2>👤 Player: <span id="player"></span></h2>
+  <h2>💰 Wallet: ₹<span id="wallet"></span></h2>
 
-<h2>👤 Player: <span id="player"></span></h2>
-<h2>💰 Wallet: ₹<span id="wallet"></span></h2>
+  <!-- QR PAYMENT -->
+  <div class="card">
+    <h3>💳 Add Money</h3>
+    <img id="qrImage" src="qr.png" width="200">
+    <p>Scan QR to pay and add balance</p>
+    <button onclick="window.open(qrImage)">Scan QR</button>
+  </div>
 
-<!-- QR PAYMENT -->
-<div class="card">
-  <h3>💳 Add Money</h3>
-  <img src="qr.png" width="200">
-  <p>Scan QR to pay and add balance</p>
-  <button onclick="window.open('qr.png')">Scan QR</button>
-</div>
+  <div class="card">
+    <h3>Solo Match</h3>
+    <p>Entry ₹10 | Prize ₹100</p>
+    <button onclick="join(10,'Solo')">Join</button>
+  </div>
 
-<div class="card">
-  <h3>Solo Match</h3>
-  <p>Entry ₹10 | Prize ₹100</p>
-  <button onclick="join(10,'Solo')">Join</button>
-</div>
+  <div class="card">
+    <h3>Duo Match</h3>
+    <p>Entry ₹20 | Prize ₹200</p>
+    <button onclick="join(20,'Duo')">Join</button>
+  </div>
 
-<div class="card">
-  <h3>Duo Match</h3>
-  <p>Entry ₹20 | Prize ₹200</p>
-  <button onclick="join(20,'Duo')">Join</button>
-</div>
+  <div class="card">
+    <h3>Squad Match</h3>
+    <p>Entry ₹50 | Prize ₹500</p>
+    <button onclick="join(50,'Squad')">Join</button>
+  </div>
 
-<div class="card">
-  <h3>Squad Match</h3>
-  <p>Entry ₹50 | Prize ₹500</p>
-  <button onclick="join(50,'Squad')">Join</button>
-</div>
+  <div class="card">
+    <h3>🎮 Room Details</h3>
+    <p id="room">Join match to see Room ID</p>
+  </div>
 
-<div class="card">
-  <h3>🎮 Room Details</h3>
-  <p id="room">Join match to see Room ID</p>
-</div>
+  <h2 id="status"></h2>
 
-<h2 id="status"></h2>
+  <!-- ADMIN PANEL -->
+  <div id="adminPanel">
+    <h3>🛠 Admin Panel</h3>
 
+    <label>Solo Room ID | Pass:</label>
+    <input id="soloRoom" placeholder="12345 | 111"><br>
+
+    <label>Duo Room ID | Pass:</label>
+    <input id="duoRoom" placeholder="67890 | 222"><br>
+
+    <label>Squad Room ID | Pass:</label>
+    <input id="squadRoom" placeholder="54321 | 333"><br>
+
+    <label>QR Image URL:</label>
+    <input id="qrLink" placeholder="qr.png"><br>
+
+    <button onclick="saveAdmin()">Save Changes</button>
+  </div>
 </div>
 
 <script>
+// Player & Wallet
 let wallet = parseInt(localStorage.getItem("wallet")) || 0;
 let player = localStorage.getItem("player");
 
-// Room ID placeholders — tu yahan apna actual Room ID & Pass dal de
+// Room Data + QR
 let roomData = {
   "Solo": "Room ID: 12345 | Pass: 111",
   "Duo": "Room ID: 67890 | Pass: 222",
   "Squad": "Room ID: 54321 | Pass: 333"
 };
-
-// Agar player pehle login kar chuka hai
-if(player){
-  showApp();
-}
+let qrImage = "qr.png";
 
 // LOGIN FUNCTION
 function login(){
@@ -111,6 +98,10 @@ function login(){
   if(name){
     localStorage.setItem("player", name);
     showApp();
+    if(name.toLowerCase() === "admin"){ // admin login
+      document.getElementById("adminPanel").style.display = "block";
+      loadAdminPanel();
+    }
   }
 }
 
@@ -118,15 +109,13 @@ function login(){
 function showApp(){
   document.getElementById("loginBox").style.display = "none";
   document.getElementById("app").style.display = "block";
-
   player = localStorage.getItem("player");
   wallet = parseInt(localStorage.getItem("wallet")) || 0;
-
   document.getElementById("player").innerText = player;
   updateWallet();
 }
 
-// UPDATE WALLET
+// WALLET UPDATE
 function updateWallet(){
   document.getElementById("wallet").innerText = wallet;
   localStorage.setItem("wallet", wallet);
@@ -137,15 +126,36 @@ function join(fee,type){
   if(wallet >= fee){
     wallet -= fee;
     updateWallet();
-
-    document.getElementById("status").innerText =
-    "✅ Joined " + type;
-
-    document.getElementById("room").innerText =
-    roomData[type];
+    document.getElementById("status").innerText = "✅ Joined " + type;
+    document.getElementById("room").innerText = roomData[type];
   } else {
-    document.getElementById("status").innerText =
-    "❌ Balance kam hai";
+    document.getElementById("status").innerText = "❌ Balance kam hai";
+  }
+}
+
+// ADMIN PANEL FUNCTIONS
+function loadAdminPanel(){
+  document.getElementById("soloRoom").value = roomData["Solo"];
+  document.getElementById("duoRoom").value = roomData["Duo"];
+  document.getElementById("squadRoom").value = roomData["Squad"];
+  document.getElementById("qrLink").value = qrImage;
+}
+
+function saveAdmin(){
+  roomData["Solo"] = document.getElementById("soloRoom").value;
+  roomData["Duo"] = document.getElementById("duoRoom").value;
+  roomData["Squad"] = document.getElementById("squadRoom").value;
+  qrImage = document.getElementById("qrLink").value;
+  document.getElementById("qrImage").src = qrImage;
+  alert("✅ Changes saved!");
+}
+
+// AUTO SHOW APP IF PLAYER LOGGED
+if(player){ 
+  showApp();
+  if(player.toLowerCase() === "admin"){
+    document.getElementById("adminPanel").style.display = "block";
+    loadAdminPanel();
   }
 }
 </script>
