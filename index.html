@@ -22,12 +22,11 @@
       background: orange;
       border: none;
       border-radius: 5px;
-      cursor: pointer;
     }
 
     input {
       padding: 10px;
-      margin: 10px;
+      margin: 5px;
     }
   </style>
 </head>
@@ -36,47 +35,82 @@
 
 <h1>🔥 HSA Tournament</h1>
 
-<h2>💰 Wallet: ₹<span id="wallet">100</span></h2>
+<div id="loginBox">
+  <input id="name" placeholder="Enter Name">
+  <button onclick="login()">Login</button>
+</div>
 
-<input type="number" id="addMoney" placeholder="Add Money">
+<div id="app" style="display:none;">
+
+<h2>👤 Player: <span id="player"></span></h2>
+<h2>💰 Wallet: ₹<span id="wallet"></span></h2>
+
+<input type="number" id="money" placeholder="Add Money">
 <button onclick="addMoney()">Add</button>
 
 <div class="card">
-  <h2>Solo Match</h2>
-  <p>Entry: ₹10</p>
-  <button onclick="joinMatch(10, 'Solo')">Join</button>
+  <h3>Solo Match</h3>
+  <p>Entry: ₹10 | Prize: ₹100</p>
+  <button onclick="join(10,'Solo')">Join</button>
 </div>
 
 <div class="card">
-  <h2>Duo Match</h2>
-  <p>Entry: ₹20</p>
-  <button onclick="joinMatch(20, 'Duo')">Join</button>
+  <h3>Duo Match</h3>
+  <p>Entry: ₹20 | Prize: ₹200</p>
+  <button onclick="join(20,'Duo')">Join</button>
 </div>
 
 <div class="card">
-  <h2>Squad Match</h2>
-  <p>Entry: ₹50</p>
-  <button onclick="joinMatch(50, 'Squad')">Join</button>
+  <h3>Squad Match</h3>
+  <p>Entry: ₹50 | Prize: ₹500</p>
+  <button onclick="join(50,'Squad')">Join</button>
 </div>
 
 <h2 id="status"></h2>
 
+</div>
+
 <script>
-let wallet = 100;
+let wallet = localStorage.getItem("wallet") || 100;
+let player = localStorage.getItem("player");
+
+if(player){
+  showApp();
+}
+
+function login(){
+  let name = document.getElementById("name").value;
+  if(name){
+    localStorage.setItem("player", name);
+    showApp();
+  }
+}
+
+function showApp(){
+  document.getElementById("loginBox").style.display = "none";
+  document.getElementById("app").style.display = "block";
+
+  player = localStorage.getItem("player");
+  wallet = parseInt(localStorage.getItem("wallet")) || 100;
+
+  document.getElementById("player").innerText = player;
+  updateWallet();
+}
 
 function updateWallet(){
   document.getElementById("wallet").innerText = wallet;
+  localStorage.setItem("wallet", wallet);
 }
 
 function addMoney(){
-  let amount = parseInt(document.getElementById("addMoney").value);
+  let amount = parseInt(document.getElementById("money").value);
   if(amount > 0){
     wallet += amount;
     updateWallet();
   }
 }
 
-function joinMatch(fee, type){
+function join(fee,type){
   if(wallet >= fee){
     wallet -= fee;
     updateWallet();
