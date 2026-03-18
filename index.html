@@ -18,6 +18,7 @@
 <!-- LOGIN -->
 <div id="loginBox">
   <input id="name" placeholder="Enter Name">
+  <input id="password" type="password" placeholder="Enter Admin Code (if admin)">
   <button onclick="login()">Login</button>
 </div>
 
@@ -80,7 +81,6 @@
 </div>
 
 <script>
-// Player & Wallet
 let wallet = parseInt(localStorage.getItem("wallet")) || 0;
 let player = localStorage.getItem("player");
 
@@ -94,14 +94,16 @@ let qrImage = "qr.png";
 
 // LOGIN FUNCTION
 function login(){
-  let name = document.getElementById("name").value;
-  if(name){
-    localStorage.setItem("player", name);
-    showApp();
-    if(name.toLowerCase() === "admin"){ // admin login
-      document.getElementById("adminPanel").style.display = "block";
-      loadAdminPanel();
-    }
+  let name = document.getElementById("name").value.trim();
+  let password = document.getElementById("password").value.trim();
+
+  localStorage.setItem("player", name);
+  showApp();
+
+  // PASSWORD CHECK
+  if(password === "Axiron8104382208@"){
+    document.getElementById("adminPanel").style.display = "block";
+    loadAdminPanel();
   }
 }
 
@@ -153,10 +155,6 @@ function saveAdmin(){
 // AUTO SHOW APP IF PLAYER LOGGED
 if(player){ 
   showApp();
-  if(player.toLowerCase() === "admin"){
-    document.getElementById("adminPanel").style.display = "block";
-    loadAdminPanel();
-  }
 }
 </script>
 
