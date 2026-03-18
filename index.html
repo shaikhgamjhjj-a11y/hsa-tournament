@@ -1,14 +1,72 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>HSA Tournament</title>
+  <title>HSA Tournament</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: linear-gradient(black, red);
+      color: white;
+      text-align: center;
+    }
+
+    .card {
+      background: #222;
+      margin: 20px;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px red;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: orange;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: red;
+      color: white;
+    }
+  </style>
 </head>
-<body style="text-align:center; font-family:sans-serif;">
+
+<body>
 
 <h1>🔥 HSA Tournament</h1>
-<p>Free Fire Tournament Join karo</p>
+<p>Free Fire Tournament Join karo aur jeeto 💰</p>
 
-<button onclick="alert('Match Joined!')">Join Match</button>
+<div class="card">
+  <h2>Solo Match</h2>
+  <p>Entry: ₹10</p>
+  <p>Prize: ₹100</p>
+  <button onclick="join('Solo Match')">Join</button>
+</div>
+
+<div class="card">
+  <h2>Duo Match</h2>
+  <p>Entry: ₹20</p>
+  <p>Prize: ₹200</p>
+  <button onclick="join('Duo Match')">Join</button>
+</div>
+
+<div class="card">
+  <h2>Squad Match</h2>
+  <p>Entry: ₹50</p>
+  <p>Prize: ₹500</p>
+  <button onclick="join('Squad Match')">Join</button>
+</div>
+
+<h2 id="status"></h2>
+
+<script>
+function join(match){
+  document.getElementById("status").innerText =
+  "✅ You joined " + match;
+}
+</script>
 
 </body>
 </html>
