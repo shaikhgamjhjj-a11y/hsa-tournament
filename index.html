@@ -15,20 +15,19 @@
       margin: 20px;
       padding: 20px;
       border-radius: 10px;
-      box-shadow: 0 0 10px red;
     }
 
     button {
-      padding: 10px 20px;
+      padding: 10px;
       background: orange;
       border: none;
       border-radius: 5px;
       cursor: pointer;
     }
 
-    button:hover {
-      background: red;
-      color: white;
+    input {
+      padding: 10px;
+      margin: 10px;
     }
   </style>
 </head>
@@ -36,35 +35,57 @@
 <body>
 
 <h1>🔥 HSA Tournament</h1>
-<p>Free Fire Tournament Join karo aur jeeto 💰</p>
+
+<h2>💰 Wallet: ₹<span id="wallet">100</span></h2>
+
+<input type="number" id="addMoney" placeholder="Add Money">
+<button onclick="addMoney()">Add</button>
 
 <div class="card">
   <h2>Solo Match</h2>
   <p>Entry: ₹10</p>
-  <p>Prize: ₹100</p>
-  <button onclick="join('Solo Match')">Join</button>
+  <button onclick="joinMatch(10, 'Solo')">Join</button>
 </div>
 
 <div class="card">
   <h2>Duo Match</h2>
   <p>Entry: ₹20</p>
-  <p>Prize: ₹200</p>
-  <button onclick="join('Duo Match')">Join</button>
+  <button onclick="joinMatch(20, 'Duo')">Join</button>
 </div>
 
 <div class="card">
   <h2>Squad Match</h2>
   <p>Entry: ₹50</p>
-  <p>Prize: ₹500</p>
-  <button onclick="join('Squad Match')">Join</button>
+  <button onclick="joinMatch(50, 'Squad')">Join</button>
 </div>
 
 <h2 id="status"></h2>
 
 <script>
-function join(match){
-  document.getElementById("status").innerText =
-  "✅ You joined " + match;
+let wallet = 100;
+
+function updateWallet(){
+  document.getElementById("wallet").innerText = wallet;
+}
+
+function addMoney(){
+  let amount = parseInt(document.getElementById("addMoney").value);
+  if(amount > 0){
+    wallet += amount;
+    updateWallet();
+  }
+}
+
+function joinMatch(fee, type){
+  if(wallet >= fee){
+    wallet -= fee;
+    updateWallet();
+    document.getElementById("status").innerText =
+    "✅ Joined " + type + " Match";
+  } else {
+    document.getElementById("status").innerText =
+    "❌ Not enough balance";
+  }
 }
 </script>
 
