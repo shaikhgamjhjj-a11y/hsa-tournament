@@ -45,36 +45,40 @@
   <button onclick="login()">Login</button>
 </div>
 
-<!-- MAIN APP -->
+<!-- MAIN -->
 <div id="app" style="display:none;">
 
 <h2>👤 Player: <span id="player"></span></h2>
 <h2>💰 Wallet: ₹<span id="wallet"></span></h2>
 
-<input type="number" id="money" placeholder="Add Money">
-<button onclick="addMoney()">Add</button>
+<!-- PAYMENT BUTTON -->
+<button onclick="window.open('https://rzp.io/l/YOUR-LINK')">
+💳 Add Money (UPI)
+</button>
+
+<p>⚠️ Payment karne ke baad admin se balance add karvao</p>
 
 <div class="card">
   <h3>Solo Match</h3>
-  <p>Entry: ₹10 | Prize: ₹100</p>
+  <p>Entry ₹10 | Prize ₹100</p>
   <button onclick="join(10,'Solo')">Join</button>
 </div>
 
 <div class="card">
   <h3>Duo Match</h3>
-  <p>Entry: ₹20 | Prize: ₹200</p>
+  <p>Entry ₹20 | Prize ₹200</p>
   <button onclick="join(20,'Duo')">Join</button>
 </div>
 
 <div class="card">
   <h3>Squad Match</h3>
-  <p>Entry: ₹50 | Prize: ₹500</p>
+  <p>Entry ₹50 | Prize ₹500</p>
   <button onclick="join(50,'Squad')">Join</button>
 </div>
 
 <div class="card">
   <h3>🎮 Room Details</h3>
-  <p id="room">Join karo to Room ID dikhega</p>
+  <p id="room">Join karne ke baad dikhega</p>
 </div>
 
 <h2 id="status"></h2>
@@ -82,7 +86,7 @@
 </div>
 
 <script>
-let wallet = localStorage.getItem("wallet") || 100;
+let wallet = localStorage.getItem("wallet") || 0;
 let player = localStorage.getItem("player");
 
 let roomData = {
@@ -108,7 +112,7 @@ function showApp(){
   document.getElementById("app").style.display = "block";
 
   player = localStorage.getItem("player");
-  wallet = parseInt(localStorage.getItem("wallet")) || 100;
+  wallet = parseInt(localStorage.getItem("wallet")) || 0;
 
   document.getElementById("player").innerText = player;
   updateWallet();
@@ -119,27 +123,19 @@ function updateWallet(){
   localStorage.setItem("wallet", wallet);
 }
 
-function addMoney(){
-  let amount = parseInt(document.getElementById("money").value);
-  if(amount > 0){
-    wallet += amount;
-    updateWallet();
-  }
-}
-
 function join(fee,type){
   if(wallet >= fee){
     wallet -= fee;
     updateWallet();
 
     document.getElementById("status").innerText =
-    "✅ Joined " + type + " Match";
+    "✅ Joined " + type;
 
     document.getElementById("room").innerText =
     roomData[type];
   } else {
     document.getElementById("status").innerText =
-    "❌ Not enough balance";
+    "❌ Balance kam hai";
   }
 }
 </script>
